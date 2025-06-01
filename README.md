@@ -1,18 +1,85 @@
-# xiris
 
-Xiris is an update server for electron based applications. It's a SvelteKit replica of the [vercel/hazel](https://github.com/vercel/hazel) project.
+# Xiris ⚡️
 
-- Uses SQLite caching (can be changed to memory easily for serverless applications)
-- Supports private repositories
-- i18n Support
+[![License](https://img.shields.io/github/license/OpenAnime/xiris)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/OpenAnime/xiris?style=social)](https://github.com/OpenAnime/xiris)
 
-## Configuration
+> A modern update server for Electron apps — built with [SvelteKit](https://kit.svelte.dev), [Vite](https://vitejs.dev), [Tailwind CSS](https://tailwindcss.com), [TypeScript](https://www.typescriptlang.org), and [ParaglideJS](https://paraglidejs.org).
 
-You can configure the server by creating a `.env` file in the root of the project. The following environment variables are available:
-- `APP_URL`: The url of your server. Going to be used for generating RELEASES files. (Required)
-- `PORT`: The port the server will listen on. Defaults to `3000`.
-- `GITHUB_REPO`: The GitHub repository to use for the update server. (Required)
-- `GITHUB_TOKEN`: If you're using a private repository, you need to provide a GitHub token.
-- `GITHUB_PRE_RELEASES`: If you want to allow pre-releases to be downloaded, set this to `true`.
-- `GITHUB_PRE_UPDATE`: If you want to allow pre-releases in the update channel, set this to `true`.
-- `REFRESH_INTERVAL`: The interval to refresh the update server. Defaults to `15m`.
+**Xiris** is a sleek and flexible Electron update server inspired by [Vercel's Hazel](https://github.com/vercel/hazel), reimagined with modern web technologies.
+
+Built with: \
+![SvelteKit](https://img.shields.io/badge/SvelteKit-%23ff3e00?style=for-the-badge&logo=svelte&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-%23646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-%2306B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-%23007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![ParaglideJS](https://img.shields.io/badge/ParaglideJS-%23327EFF?style=for-the-badge&logo=translate&logoColor=white)
+
+
+## 🚀 Features
+
+- 🌐 Internationalization support via **ParaglideJS**
+- 🎨 Rapid styling with **Tailwind CSS**
+- 💾 Smart caching using **SQLite** (can be swapped with in-memory for serverless environments)
+- 🔐 **Private repo** support via GitHub tokens
+- 🧪 Support for **pre-releases** and **pre-update channels**
+
+
+## 🛠 Configuration
+
+Set up your environment using a `.env` file at the root of the project:
+
+```env
+APP_URL=https://your-xiris-server.com        # Required: Used in RELEASES file
+PORT=3000                                    # Optional: Defaults to 3000
+GITHUB_REPO=your-org/your-repo               # Required: Target GitHub repo
+GITHUB_TOKEN=ghp_your_token_here             # Optional: For private repositories
+GITHUB_PRE_RELEASES=true                     # Optional: Allow downloading pre-releases
+GITHUB_PRE_UPDATE=true                       # Optional: Allow pre-releases in update channel
+REFRESH_INTERVAL=15m                         # Optional: Default is 15 minutes
+````
+
+
+## 📦 Getting Started
+
+1. **Install dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Run the dev server**
+
+   ```bash
+   pnpm dev
+   ```
+
+3. **Build for production**
+
+   ```bash
+   pnpm build
+   ```
+
+4. **Preview production build**
+
+   ```bash
+   pnpm preview
+   ```
+
+## 🌍 Localization
+
+Xiris uses [ParaglideJS](https://paraglidejs.org) for type-safe i18n across all routes. Language switching is seamless and supports SSR.
+
+## 📤 Deployment
+
+Xiris works well on any Node-compatible hosting provider. For serverless use cases, switch the cache backend to an in-memory adapter.
+
+We recommend [Vercel](https://vercel.com) for zero-config deployment.
+
+## 🙌 Credits
+
+Inspired by [Vercel Hazel](https://github.com/vercel/hazel), rebuilt with modern tools and open-source love.
+
+## 📄 License
+
+[GPL3](LICENSE) © \[OpenAnime]
