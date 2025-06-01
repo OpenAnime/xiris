@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/github/license/OpenAnime/xiris)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/OpenAnime/xiris?style=social)](https://github.com/OpenAnime/xiris)
 
-> A modern update server for Electron apps — built with [SvelteKit](https://kit.svelte.dev), [Vite](https://vitejs.dev), [Tailwind CSS](https://tailwindcss.com), [TypeScript](https://www.typescriptlang.org), and [ParaglideJS](https://paraglidejs.org).
+> A modern update server for Electron apps
 
 **Xiris** is a sleek and flexible Electron update server inspired by [Vercel's Hazel](https://github.com/vercel/hazel), reimagined with modern web technologies.
 
