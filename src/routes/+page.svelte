@@ -15,20 +15,21 @@
 	let { data }: PageProps = $props();
 
 	type DownloadOption = { value: string; label: string };
+	type UserAgentData = {
+		getHighEntropyValues: (hints: string[]) => Promise<{ architecture?: string }>;
+	};
+	type NavigatorWithUserAgentData = Navigator & { userAgentData?: UserAgentData };
 
 	const downloadablePlatforms = Object.keys(data.cache.latest?.platforms ?? {});
 	const isLinux = data.os?.name?.toLowerCase() === 'linux';
 	const detectedPlatform = checkAlias(data.os?.name);
 	const detectedDownloadPlatform = detectedPlatform === 'darwin' ? 'dmg' : detectedPlatform;
-	const detectedPlatformLabel =
+	const initialDetectedPlatformLabel =
 		typeof detectedDownloadPlatform === 'string'
 			? getPlatformLabel(detectedDownloadPlatform)
 			: data.os?.name || '';
-	const detectedDownloadTarget =
+	const initialDetectedDownloadTarget =
 		typeof detectedDownloadPlatform === 'string' ? detectedDownloadPlatform : '';
-	const hasDetectedDownload =
-		typeof detectedDownloadPlatform === 'string' &&
-		Boolean(data.cache.latest?.platforms?.[detectedDownloadPlatform]);
 	const selectablePlatforms = isLinux
 		? downloadablePlatforms.filter(isLinuxInstaller)
 		: downloadablePlatforms;
@@ -37,7 +38,11 @@
 		label: getPlatformLabel(platform)
 	}));
 
-	let available = $state(!isLinux && hasDetectedDownload);
+	let detectedDownloadTarget = $state(initialDetectedDownloadTarget);
+	let detectedPlatformLabel = $state(initialDetectedPlatformLabel);
+	let available = $state(
+		!isLinux && downloadablePlatforms.includes(initialDetectedDownloadTarget)
+	);
 	let selectedPlatform = $state(dropdownItems.length === 1 ? dropdownItems[0].value : '');
 	let warningOpen = $state(false);
 	let pendingDownload = $state('');
@@ -45,6 +50,45 @@
 	const macosWarningEnabled = !['false', '0', 'off', 'no'].includes(
 		(env.PUBLIC_MACOS_UNSIGNED_WARNING || 'true').toLowerCase()
 	);
+
+	async function detectMacArchitecture() {
+		if (!isMacOSPlatform(detectedDownloadPlatform)) return;
+
+		const userAgentData = (navigator as NavigatorWithUserAgentData).userAgentData;
+		if (!userAgentData) return;
+
+		let architecture: string | undefined;
+		try {
+			({ architecture } = await userAgentData.getHighEntropyValues(['architecture']));
+		} catch {
+			return;
+		}
+		const normalizedArchitecture = architecture?.toLowerCase();
+		const architectureSuffix =
+			normalizedArchitecture === 'arm' || normalizedArchitecture === 'arm64'
+				? '_arm64'
+				: normalizedArchitecture === 'x86' || normalizedArchitecture === 'x86_64'
+					? ''
+					: null;
+
+		if (architectureSuffix === null) return;
+
+		const architectureTarget = `${detectedDownloadPlatform}${architectureSuffix}`;
+		const target = downloadablePlatforms.includes(architectureTarget)
+			? architectureTarget
+			: downloadablePlatforms.includes(detectedDownloadPlatform)
+				? detectedDownloadPlatform
+				: '';
+
+		if (!target) {
+			available = false;
+			return;
+		}
+
+		detectedDownloadTarget = target;
+		detectedPlatformLabel = getPlatformLabel(target);
+		available = !isLinux;
+	}
 
 	function requestDownload(platform: string, href: string) {
 		if (macosWarningEnabled && isMacOSPlatform(platform)) {
@@ -77,6 +121,7 @@
 			delay: anime.stagger(100),
 			easing: 'easeOutExpo'
 		});
+		void detectMacArchitecture();
 	});
 </script>
 
@@ -93,7 +138,8 @@
 			{#if available}
 				<div class="flex flex-col gap-2">
 					<Button
-						onclick={() => requestDownload(detectedDownloadTarget, '/download')}
+						onclick={() =>
+							requestDownload(detectedDownloadTarget, `/download/${detectedDownloadTarget}`)}
 						class="!pr-4"
 						type="accent"
 						rounded
