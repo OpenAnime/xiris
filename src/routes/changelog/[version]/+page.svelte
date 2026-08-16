@@ -2,7 +2,7 @@
 	import { Button } from 'bits-ui';
 	import { page } from '$app/state';
 	import { cn } from '$lib/utils';
-	import { aliases } from '$lib/aliases.js';
+	import { getPlatformLabel } from '$lib/aliases.js';
 	import type { Plugin } from 'svelte-exmarkdown';
 	import Markdown from 'svelte-exmarkdown';
 	import rehypeHighlight from 'rehype-highlight';
@@ -16,13 +16,8 @@
 	let { data } = $props();
 
 	const activeRouteStyle = ' !text-pink-900 !font-semibold bg-pink-100';
-	console.log(data);
-
 	const downloadablePlatforms = data.current?.platforms ? Object.keys(data.current.platforms) : [];
-	let platforms = $state([]);
-	downloadablePlatforms.forEach((platform) => {
-		platforms.push(aliases[platform][0]);
-	});
+	const platforms = downloadablePlatforms.map(getPlatformLabel);
 
 	const plugins: Plugin[] = [
 		{

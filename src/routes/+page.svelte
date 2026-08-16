@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { aliases, checkAlias } from '$lib/aliases';
+	import { checkAlias, getPlatformLabel, isLinuxInstaller } from '$lib/aliases';
 	import type { PageProps } from './$types';
 	import Icon from '@iconify/svelte';
 	import Button from '$components/Button.svelte';
@@ -8,32 +8,27 @@
 	import Tag from '$components/Tag.svelte';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages.js';
-	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
 
-	let available = $state(false);
-	// if data.cache.latest.platforms exists for the user's os
-	const alias = checkAlias(`${data.os?.name}`.toLowerCase()) ?? null;
-	if (alias) {
-		if (data.cache.latest.platforms[alias]) {
-			available = true;
-		}
-	}
+	type DownloadOption = { value: string; label: string };
 
-	let selectedPlatform = $state('');
-	const downloadablePlatforms = data.cache.latest?.platforms
-		? Object.keys(data.cache.latest.platforms)
-		: [];
-	let dropdownItems = $state([]);
-	downloadablePlatforms.forEach((platform) => {
-		const item = {
-			value: aliases[platform][1],
-			label: aliases[platform][0]
-		};
-		dropdownItems.push(item);
-	});
-	console.log(page.data)
+	const downloadablePlatforms = Object.keys(data.cache.latest?.platforms ?? {});
+	const isLinux = data.os?.name?.toLowerCase() === 'linux';
+	const detectedPlatform = checkAlias(data.os?.name);
+	const hasDetectedDownload =
+		typeof detectedPlatform === 'string' &&
+		Boolean(data.cache.latest?.platforms?.[detectedPlatform]);
+	const selectablePlatforms = isLinux
+		? downloadablePlatforms.filter(isLinuxInstaller)
+		: downloadablePlatforms;
+	const dropdownItems: DownloadOption[] = selectablePlatforms.map((platform) => ({
+		value: platform,
+		label: getPlatformLabel(platform)
+	}));
+
+	let available = $state(!isLinux && hasDetectedDownload);
+	let selectedPlatform = $state(dropdownItems.length === 1 ? dropdownItems[0].value : '');
 	onMount(() => {
 		anime({
 			targets: '.animate',
@@ -43,7 +38,6 @@
 			delay: anime.stagger(100),
 			easing: 'easeOutExpo'
 		});
-		anime;
 	});
 </script>
 
@@ -77,7 +71,8 @@
 				/>
 				<Button
 					class="!pr-4"
-					href="/download/{selectedPlatform}"
+					href={selectedPlatform ? `/download/${selectedPlatform}` : undefined}
+					disabled={!selectedPlatform}
 					data-no-translate
 					type="accent"
 					rounded

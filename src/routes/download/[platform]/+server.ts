@@ -1,4 +1,4 @@
-import { error, json, text, type RequestHandler } from '@sveltejs/kit';
+import { error, type RequestHandler } from '@sveltejs/kit';
 import { loadCache } from '$lib/cache';
 import type { ErrorResponse } from '$lib/types';
 import { downloadAsset } from '$lib/asset';
@@ -7,7 +7,7 @@ import { checkAlias } from '$lib/aliases';
 export const GET: RequestHandler = async ({ params, url }) => {
 	const isUpdate = url.searchParams.get('update') === 'true';
 
-	let { platform: platformName } = params as { platform: string | boolean };
+	let platformName = params.platform ?? '';
 	if (platformName === 'mac' && !isUpdate) {
 		platformName = 'dmg';
 	}
@@ -16,7 +16,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	}
 	const { latest } = await loadCache();
 
-	let platform = checkAlias(platformName as string);
+	const platform = checkAlias(platformName);
 
 	if (!platform) {
 		error(400, {
@@ -24,12 +24,11 @@ export const GET: RequestHandler = async ({ params, url }) => {
 			message: 'The specified platform is not valid'
 		} as ErrorResponse);
 	}
-	if (!latest.platforms[platform]) {
+	if (!latest?.platforms?.[platform]) {
 		error(404, {
 			code: 'no_asset',
 			message: 'No assets found for this platform'
 		} as ErrorResponse);
 	}
-	console.log(platform);
 	return downloadAsset(latest.platforms[platform]);
 };

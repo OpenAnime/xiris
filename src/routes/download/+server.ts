@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	} else if (os === 'macos' && isUpdate) {
 		platform = 'darwin';
 	} else if (os === 'linux') {
-		platform = 'appimage';
+		platform = 'AppImage';
 	} else {
 		return error(404, {
 			code: 'no_downloads',
@@ -26,12 +26,11 @@ export const GET: RequestHandler = async ({ request, url }) => {
 	}
 
 	const { latest } = await loadCache();
-	if (!latest.platforms[platform]) {
+	if (!latest?.platforms?.[platform]) {
 		error(404, {
 			code: 'no_asset',
 			message: 'No assets found for this platform'
 		} as ErrorResponse);
 	}
-	console.log("Latest platform", latest.platforms[platform]);
 	return downloadAsset(latest.platforms[platform]);
 };
