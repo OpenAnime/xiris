@@ -11,5 +11,12 @@
 	"changelog": "Değişiklikler",
 	"releases": "Sürümler",
 	"footer": "xiris {version} OpenAnime Labs tarafından geliştirildi. ©{date}",
-	"latest_version": "En son sürüm"
+	"latest_version": "En son sürüm",
+	"macos_warning_title": "macOS uygulama uyarısı",
+	"macos_warning_download_for": "{platform} sürümünü indirmek üzeresiniz.",
+	"macos_warning_description": "OpenAnime ücretli bir Apple geliştirici sertifikası içermediğinden, macOS uygulamayı ilk açılışta “Bilinmeyen Geliştirici” veya “hasar görmüş” uyarısıyla engelleyebilir.",
+	"macos_warning_instruction": "Uygulamayı açabilmek için Terminal uygulamasını açıp aşağıdaki komutu çalıştırmanız yeterlidir:",
+	"macos_warning_continue": "Yine de indir",
+	"macos_warning_cancel": "İptal",
+	"macos_warning_close": "Uyarıyı kapat"
 }

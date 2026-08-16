@@ -11,5 +11,12 @@
     "changelog": "変更履歴",
     "releases": "リリース",
     "footer": "OpenAnime Labs によって開発された xiris {version}。©{date}",
-    "latest_version": "最新バージョン"
+    "latest_version": "最新バージョン",
+    "macos_warning_title": "macOSアプリの警告",
+    "macos_warning_download_for": "{platform}をダウンロードしようとしています。",
+    "macos_warning_description": "OpenAnimeには有料のApple Developer証明書がないため、macOSは初回起動時に「不明な開発元」または「壊れている」という理由でアプリをブロックする場合があります。",
+    "macos_warning_instruction": "アプリを開くには、ターミナルを開いて次のコマンドを実行してください。",
+    "macos_warning_continue": "ダウンロードを続行",
+    "macos_warning_cancel": "キャンセル",
+    "macos_warning_close": "警告を閉じる"
 }

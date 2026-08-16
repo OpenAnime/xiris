@@ -9,6 +9,7 @@ export const aliases = {
 
 const linuxInstallers = new Set(['deb', 'rpm', 'AppImage']);
 const directInstallers = new Set(['exe', 'dmg', 'rpm', 'deb']);
+const macosInstallers = new Set(['darwin', 'dmg']);
 
 function splitArchitecture(platform: string) {
 	return platform.endsWith('_arm64')
@@ -38,8 +39,14 @@ export function checkAlias(platform: string | undefined) {
 
 export function getPlatformLabel(platform: string) {
 	const { base, architecture } = splitArchitecture(platform);
+	if (macosInstallers.has(base)) return architecture ? 'macOS (ARM)' : 'macOS (Intel)';
+
 	const label = aliases[base]?.[0] ?? base;
 	return architecture ? `${label} (ARM64)` : label;
+}
+
+export function isMacOSPlatform(platform: string | false) {
+	return typeof platform === 'string' && macosInstallers.has(splitArchitecture(platform).base);
 }
 
 export function isLinuxInstaller(platform: string) {

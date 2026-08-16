@@ -11,5 +11,12 @@
 	"changelog": "Changelog",
 	"releases": "Releases",
 	"footer": "xiris {version} developed by OpenAnime Labs. ©{date}",
-	"latest_version": "Latest version"
+	"latest_version": "Latest version",
+	"macos_warning_title": "macOS app warning",
+	"macos_warning_download_for": "You are about to download {platform}.",
+	"macos_warning_description": "Because OpenAnime does not have a paid Apple Developer certificate, macOS may block the app on first launch with an “Unknown Developer” or “damaged” warning.",
+	"macos_warning_instruction": "To open the app, open Terminal and run the following command:",
+	"macos_warning_continue": "Continue to download",
+	"macos_warning_cancel": "Cancel",
+	"macos_warning_close": "Close warning"
 }

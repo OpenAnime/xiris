@@ -37,6 +37,7 @@ GITHUB_TOKEN=ghp_your_token_here             # Optional: For private repositorie
 GITHUB_PRE_RELEASES=true                     # Optional: Allow downloading pre-releases
 GITHUB_PRE_UPDATE=true                       # Optional: Allow pre-releases in update channel
 REFRESH_INTERVAL=15m                         # Optional: Default is 15 minutes
+PUBLIC_MACOS_UNSIGNED_WARNING=true           # Optional: Show the unsigned macOS download warning
 ````
 
 

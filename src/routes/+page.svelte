@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { checkAlias, getPlatformLabel, isLinuxInstaller } from '$lib/aliases';
+	import { checkAlias, getPlatformLabel, isLinuxInstaller, isMacOSPlatform } from '$lib/aliases';
 	import type { PageProps } from './$types';
 	import Icon from '@iconify/svelte';
 	import Button from '$components/Button.svelte';
@@ -8,6 +8,9 @@
 	import Tag from '$components/Tag.svelte';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages.js';
+	import { goto } from '$app/navigation';
+	import { env } from '$env/dynamic/public';
+	import MacosWarningDialog from '$components/MacosWarningDialog.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -16,9 +19,14 @@
 	const downloadablePlatforms = Object.keys(data.cache.latest?.platforms ?? {});
 	const isLinux = data.os?.name?.toLowerCase() === 'linux';
 	const detectedPlatform = checkAlias(data.os?.name);
+	const detectedDownloadPlatform = detectedPlatform === 'darwin' ? 'dmg' : detectedPlatform;
+	const detectedPlatformLabel =
+		typeof detectedDownloadPlatform === 'string'
+			? getPlatformLabel(detectedDownloadPlatform)
+			: data.os?.name || '';
 	const hasDetectedDownload =
-		typeof detectedPlatform === 'string' &&
-		Boolean(data.cache.latest?.platforms?.[detectedPlatform]);
+		typeof detectedDownloadPlatform === 'string' &&
+		Boolean(data.cache.latest?.platforms?.[detectedDownloadPlatform]);
 	const selectablePlatforms = isLinux
 		? downloadablePlatforms.filter(isLinuxInstaller)
 		: downloadablePlatforms;
@@ -29,6 +37,35 @@
 
 	let available = $state(!isLinux && hasDetectedDownload);
 	let selectedPlatform = $state(dropdownItems.length === 1 ? dropdownItems[0].value : '');
+	let warningOpen = $state(false);
+	let pendingDownload = $state('');
+	let pendingDownloadHref = $state('');
+	const macosWarningEnabled = !['false', '0', 'off', 'no'].includes(
+		(env.PUBLIC_MACOS_UNSIGNED_WARNING || 'true').toLowerCase()
+	);
+
+	function requestDownload(platform: string, href: string) {
+		if (macosWarningEnabled && isMacOSPlatform(platform)) {
+			pendingDownload = platform;
+			pendingDownloadHref = href;
+			warningOpen = true;
+			return;
+		}
+
+		void goto(href);
+	}
+
+	function cancelDownload() {
+		warningOpen = false;
+		pendingDownload = '';
+		pendingDownloadHref = '';
+	}
+
+	function confirmDownload() {
+		const href = pendingDownloadHref;
+		cancelDownload();
+		if (href) void goto(href);
+	}
 	onMount(() => {
 		anime({
 			targets: '.animate',
@@ -53,8 +90,13 @@
 		<div class="flex gap-2 w-full animate">
 			{#if available}
 				<div class="flex flex-col gap-2">
-					<Button href="/download" class="!pr-4" type="accent" rounded data-no-translate
-						>{m.download_for({ platform: data.os.name })}<Icon
+					<Button
+						onclick={() => requestDownload('dmg', '/download')}
+						class="!pr-4"
+						type="accent"
+						rounded
+						data-no-translate
+						>{m.download_for({ platform: detectedPlatformLabel })}<Icon
 							icon="tabler:arrow-narrow-right"
 							class="ml-2 size-6"
 						/></Button
@@ -71,7 +113,8 @@
 				/>
 				<Button
 					class="!pr-4"
-					href={selectedPlatform ? `/download/${selectedPlatform}` : undefined}
+					onclick={() =>
+						selectedPlatform && requestDownload(selectedPlatform, `/download/${selectedPlatform}`)}
 					disabled={!selectedPlatform}
 					data-no-translate
 					type="accent"
@@ -92,6 +135,12 @@
 			{/if}
 		</div>
 	</div>
+	<MacosWarningDialog
+		open={warningOpen}
+		platform={getPlatformLabel(pendingDownload || 'dmg')}
+		onConfirm={confirmDownload}
+		onCancel={cancelDownload}
+	/>
 	<div class="flex items-center justify-center overflow-clip animate">
 		<div>
 			<img

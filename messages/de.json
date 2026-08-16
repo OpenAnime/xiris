@@ -11,5 +11,12 @@
 	"changelog": "Änderungsprotokoll",
 	"releases": "Veröffentlichungen",
 	"footer": "xiris {version} entwickelt von OpenAnime Labs. ©{date}",
-	"latest_version": "Neueste Version"
+	"latest_version": "Neueste Version",
+	"macos_warning_title": "macOS-Warnung",
+	"macos_warning_download_for": "Sie sind dabei, {platform} herunterzuladen.",
+	"macos_warning_description": "Da OpenAnime kein kostenpflichtiges Apple-Entwicklerzertifikat besitzt, blockiert macOS die App beim ersten Start möglicherweise mit dem Hinweis „Unbekannter Entwickler“ oder „beschädigt“.",
+	"macos_warning_instruction": "Öffnen Sie zum Starten der App das Terminal und führen Sie den folgenden Befehl aus:",
+	"macos_warning_continue": "Trotzdem herunterladen",
+	"macos_warning_cancel": "Abbrechen",
+	"macos_warning_close": "Warnung schließen"
 }
