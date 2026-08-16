@@ -24,6 +24,8 @@
 		typeof detectedDownloadPlatform === 'string'
 			? getPlatformLabel(detectedDownloadPlatform)
 			: data.os?.name || '';
+	const detectedDownloadTarget =
+		typeof detectedDownloadPlatform === 'string' ? detectedDownloadPlatform : '';
 	const hasDetectedDownload =
 		typeof detectedDownloadPlatform === 'string' &&
 		Boolean(data.cache.latest?.platforms?.[detectedDownloadPlatform]);
@@ -91,7 +93,7 @@
 			{#if available}
 				<div class="flex flex-col gap-2">
 					<Button
-						onclick={() => requestDownload('dmg', '/download')}
+						onclick={() => requestDownload(detectedDownloadTarget, '/download')}
 						class="!pr-4"
 						type="accent"
 						rounded
