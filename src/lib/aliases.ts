@@ -45,6 +45,13 @@ export function getPlatformLabel(platform: string) {
 	return architecture ? `${label} (ARM64)` : label;
 }
 
+export function getDownloadPlatform(platform: string | false) {
+	if (!platform) return false;
+
+	const { base, architecture } = splitArchitecture(platform);
+	return base === 'darwin' ? `dmg${architecture}` : platform;
+}
+
 export function isMacOSPlatform(platform: string | false) {
 	return typeof platform === 'string' && macosInstallers.has(splitArchitecture(platform).base);
 }

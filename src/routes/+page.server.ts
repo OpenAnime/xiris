@@ -2,7 +2,7 @@ import { loadCache } from '$lib/cache';
 import { UAParser } from 'ua-parser-js';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ request }) => {
+export const load = async ({ request, url }) => {
 	const ua = UAParser(request.headers.get('User-Agent') || '');
 	const os = {
 		name: ua.os.name,
@@ -19,6 +19,7 @@ export const load = async ({ request }) => {
 	const { raw, ...rest } = data;
 	return {
 		cache: { ...rest },
-		os
+		os,
+		requestedPlatform: url.searchParams.get('platform')
 	};
 };

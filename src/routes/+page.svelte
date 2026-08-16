@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { checkAlias, getPlatformLabel, isLinuxInstaller, isMacOSPlatform } from '$lib/aliases';
+	import {
+		checkAlias,
+		getDownloadPlatform,
+		getPlatformLabel,
+		isLinuxInstaller,
+		isMacOSPlatform
+	} from '$lib/aliases';
 	import type { PageProps } from './$types';
 	import Icon from '@iconify/svelte';
 	import Button from '$components/Button.svelte';
@@ -23,7 +29,7 @@
 	const downloadablePlatforms = Object.keys(data.cache.latest?.platforms ?? {});
 	const isLinux = data.os?.name?.toLowerCase() === 'linux';
 	const detectedPlatform = checkAlias(data.os?.name);
-	const detectedDownloadPlatform = detectedPlatform === 'darwin' ? 'dmg' : detectedPlatform;
+	const detectedDownloadPlatform = getDownloadPlatform(detectedPlatform);
 	const initialDetectedPlatformLabel =
 		typeof detectedDownloadPlatform === 'string'
 			? getPlatformLabel(detectedDownloadPlatform)
@@ -33,6 +39,12 @@
 	const selectablePlatforms = isLinux
 		? downloadablePlatforms.filter(isLinuxInstaller)
 		: downloadablePlatforms;
+	const requestedPlatform = getDownloadPlatform(checkAlias(data.requestedPlatform));
+	const requestedPlatformValue =
+		typeof requestedPlatform === 'string' && selectablePlatforms.includes(requestedPlatform)
+			? requestedPlatform
+			: '';
+	const requestedPlatformIsAvailable = requestedPlatformValue !== '';
 	const dropdownItems: DownloadOption[] = selectablePlatforms.map((platform) => ({
 		value: platform,
 		label: getPlatformLabel(platform)
@@ -41,9 +53,17 @@
 	let detectedDownloadTarget = $state(initialDetectedDownloadTarget);
 	let detectedPlatformLabel = $state(initialDetectedPlatformLabel);
 	let available = $state(
-		!isLinux && downloadablePlatforms.includes(initialDetectedDownloadTarget)
+		!isLinux &&
+		!requestedPlatformIsAvailable &&
+		downloadablePlatforms.includes(initialDetectedDownloadTarget)
 	);
-	let selectedPlatform = $state(dropdownItems.length === 1 ? dropdownItems[0].value : '');
+	let selectedPlatform = $state(
+		requestedPlatformIsAvailable
+			? requestedPlatformValue
+			: dropdownItems.length === 1
+				? dropdownItems[0].value
+				: ''
+	);
 	let warningOpen = $state(false);
 	let pendingDownload = $state('');
 	let pendingDownloadHref = $state('');
