@@ -57,7 +57,7 @@
 			<p class="mt-4 text-sm leading-6 text-gray-700">{m.macos_warning_description()}</p>
 			<p class="mt-3 text-sm leading-6 text-gray-700">{m.macos_warning_instruction()}</p>
 			<code class="mt-2 block overflow-x-auto rounded-lg bg-gray-950 px-3 py-2 font-mono text-sm text-gray-100">
-				xattr -cr /Applications/OpenAnime.app
+				/usr/bin/xattr -dr com.apple.quarantine /Applications/OpenAnime.app
 			</code>
 
 			<div class="mt-6 flex justify-end gap-2">
