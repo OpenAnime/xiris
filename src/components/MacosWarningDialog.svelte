@@ -18,15 +18,15 @@
 <svelte:window onkeydown={(event) => open && event.key === 'Escape' && onCancel()} />
 
 {#if open}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+	<div class="dialog-container fixed inset-0 z-50 flex items-center justify-center p-4">
 		<button
 			type="button"
-			class="absolute inset-0 cursor-default bg-black/40 backdrop-blur-sm"
+			class="absolute inset-0 cursor-default bg-black/50"
 			aria-label={m.macos_warning_close()}
 			onclick={onCancel}
 		></button>
 		<section
-			class="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 text-gray-950 shadow-2xl"
+			class="dialog relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 text-gray-950 shadow-2xl shadow-black/25"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="macos-warning-title"
@@ -46,7 +46,7 @@
 				</div>
 				<button
 					type="button"
-					class="rounded-lg p-1 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
+					class="rounded-lg p-1 text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-900"
 					aria-label={m.macos_warning_close()}
 					onclick={onCancel}
 				>
@@ -63,14 +63,14 @@
 			<div class="mt-6 flex justify-end gap-2">
 				<button
 					type="button"
-					class="rounded-full px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+					class="rounded-full hover:scale-102 px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-100"
 					onclick={onCancel}
 				>
 					{m.macos_warning_cancel()}
 				</button>
 				<button
 					type="button"
-					class="rounded-full bg-pink-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-800"
+					class="rounded-full hover:scale-102 bg-pink-700 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-pink-800"
 					onclick={onConfirm}
 				>
 					{m.macos_warning_continue()}
@@ -79,3 +79,30 @@
 		</section>
 	</div>
 {/if}
+
+<style>
+@keyframes fade-in {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+	@keyframes dialog-appear {
+		0% {
+			opacity: 0;
+			transform: scale(1.25);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+	.dialog-container {
+		animation: fade-in 0.5s cubic-bezier(.3,0,0,1);
+	}
+	.dialog {
+		animation: dialog-appear 0.5s cubic-bezier(.3,0,0,1);
+	}
+</style>
