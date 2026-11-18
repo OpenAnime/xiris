@@ -6,7 +6,6 @@ src/lib/paraglide
 .vscode
 *.log
 *.sqlite
-.env
 .env.*
 !.env.example
 Dockerfile

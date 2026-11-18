@@ -19,9 +19,10 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
     pnpm install --frozen-lockfile --config.package-import-method=copy
 COPY . .
-# $env/static/private (GITHUB_TOKEN etc.) is inlined at build time -> .env via build secret.
-RUN --mount=type=secret,id=xiris_dotenv,required=false \
-    if [ -f /run/secrets/xiris_dotenv ]; then cp /run/secrets/xiris_dotenv .env; else cp .env.example .env; fi \
+# $env/static/private (GITHUB_REPO, GITHUB_TOKEN...) is inlined at build time. .env comes in
+# with `COPY . .` so editing it invalidates the build cache (a BuildKit secret mount does not);
+# it stays in this build stage only.
+RUN if [ ! -f .env ]; then cp .env.example .env; fi \
     && pnpm build \
     && rm -f .env
 
